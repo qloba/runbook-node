@@ -1,5 +1,5 @@
-import getArticleQuery from './queries/getArticles.js';
-import getArticlesQuery from './queries/getArticle.js';
+import getArticleQuery from './queries/getArticle.js';
+import getArticlesQuery from './queries/getArticles.js';
 import getBooksQuery from './queries/getBooks.js';
 import getCategoriesQuery from './queries/getCategories.js';
 import searchQuery from './queries/search.js';

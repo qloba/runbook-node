@@ -3,14 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const getArticles_js_1 = __importDefault(require("./queries/getArticles.js"));
 const getArticle_js_1 = __importDefault(require("./queries/getArticle.js"));
+const getArticles_js_1 = __importDefault(require("./queries/getArticles.js"));
 const getBooks_js_1 = __importDefault(require("./queries/getBooks.js"));
 const getCategories_js_1 = __importDefault(require("./queries/getCategories.js"));
 const search_js_1 = __importDefault(require("./queries/search.js"));
 const queries = {
-    getArticle: getArticles_js_1.default,
-    getArticles: getArticle_js_1.default,
+    getArticle: getArticle_js_1.default,
+    getArticles: getArticles_js_1.default,
     getBooks: getBooks_js_1.default,
     getCategories: getCategories_js_1.default,
     search: search_js_1.default
