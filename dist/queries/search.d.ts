@@ -1,0 +1,2 @@
+declare const _default: "\nquery search(\n  $scope: ID\n  $keywords: String!\n  $offset: Int\n  $limit: Int\n  $orderBy: String\n) {\n  searchResults(\n    scope: $scope\n    keywords: $keywords\n    offset: $offset\n    limit: $limit\n    orderBy: $orderBy\n  ) {\n    totalCount\n    nodes {\n      uid\n      nodeType\n      name\n      bookUid\n      bookName\n      url\n      bodySnippet\n    }\n  }\n}\n";
+export default _default;

@@ -1,0 +1,2 @@
+declare const _default: "\nquery getArticle($articleUid: ID!) {\n  node(id: $articleUid) {\n    ... on Article {\n      __typename\n      uid\n      name\n      slug\n      id\n      bodyText\n      createdAt\n      updatedAt\n      allCategories {\n        uid\n        name\n      }\n      folder {\n        uid\n        name\n      }\n      book {\n        uid\n        name\n      }\n    }\n  }\n}\n";
+export default _default;
