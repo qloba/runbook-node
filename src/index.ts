@@ -1,15 +1,15 @@
-import getArticleQuery from "./queries/getArticles.js";
-import getArticlesQuery from "./queries/getArticle.js";
-import getBooksQuery from "./queries/getBooks.js";
-import getCategoriesQuery from "./queries/getCategories.js";
-import searchQuery from "./queries/search.js";
+import getArticleQuery from './queries/getArticles.js';
+import getArticlesQuery from './queries/getArticle.js';
+import getBooksQuery from './queries/getBooks.js';
+import getCategoriesQuery from './queries/getCategories.js';
+import searchQuery from './queries/search.js';
 
 const queries: { [key: string]: string } = {
   getArticle: getArticleQuery,
   getArticles: getArticlesQuery,
   getBooks: getBooksQuery,
   getCategories: getCategoriesQuery,
-  search: searchQuery,
+  search: searchQuery
 };
 
 interface Config {
@@ -29,12 +29,12 @@ export default class runbook {
   async postData(data: object) {
     try {
       const response = await fetch(this.getEndpoint(), {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.apiToken}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.apiToken}`
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data)
       });
 
       if (!response.ok) {
@@ -44,7 +44,7 @@ export default class runbook {
       const result = await response.json();
       return JSON.stringify(result);
     } catch (error) {
-      console.error("Error posting data:", error);
+      console.error('Error posting data:', error);
     }
   }
 
@@ -58,7 +58,7 @@ export default class runbook {
     }
     const data = {
       query: queries[name]!,
-      variables,
+      variables
     };
     return await this.postData(data);
   }
