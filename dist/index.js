@@ -43,7 +43,7 @@ class runbook {
         }
     }
     getEndpoint() {
-        return `https://${this.baseUrl}/api/graphql`;
+        return `${this.baseUrl}/api/graphql`;
     }
     async query(name, variables) {
         if (!(name in queries)) {
