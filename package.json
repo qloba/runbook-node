@@ -1,12 +1,15 @@
 {
   "name": "runbook-node",
   "version": "1.0.0",
-  "description": "",
+  "description": "Runbook for Node.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "unit": "jest",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepublishOnly": "npm run build",
+    "lint": "eslint 'src/**/*.ts' --max-warnings 0",
+    "test": "npm run build && npm run unit"
   },
   "repository": {
     "type": "git",
@@ -14,20 +17,26 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/qloba/runbook-node/issues"
   },
   "homepage": "https://github.com/qloba/runbook-node#readme",
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.13.10",
+    "@typescript-eslint/eslint-plugin": "^8.27.0",
+    "@typescript-eslint/parser": "^8.27.0",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
     "globals": "^16.0.0",
+    "jest": "^29.7.0",
     "prettier": "^3.5.3",
+    "ts-jest": "^29.2.6",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.26.1"
   }
