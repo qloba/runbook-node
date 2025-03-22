@@ -4,8 +4,8 @@ query getArticles(
     $q: String
     $categoryUid: ID
     $orderBy: String = "createdAt"
-    $first: Int
-    $offset: Int
+    $first: Int = 20
+    $offset: Int = 0
   ) {
   node(id: $bookUid) {
     ... on Book {

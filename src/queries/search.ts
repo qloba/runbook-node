@@ -1,10 +1,10 @@
 export default `
 query search(
-  $scope: ID
+  $scope: ID = "all"
   $keywords: String!
-  $offset: Int
-  $limit: Int
-  $orderBy: String
+  $offset: Int = 0
+  $limit: Int = 20
+  $orderBy: String = "score"
 ) {
   searchResults(
     scope: $scope
