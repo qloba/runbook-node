@@ -108,6 +108,8 @@ export type GetArticleQueryVariables = {
 
 export type GetCategoriesQueryVariables = {
   bookUid: string;
+  first?: number;
+  offset?: number;
 };
 
 export type searchQueryVariables = {
