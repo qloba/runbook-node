@@ -24,7 +24,7 @@ query getArticles(
           name
           slug
           id
-          bodyText
+          bodySnippet
           createdAt
           updatedAt
         }

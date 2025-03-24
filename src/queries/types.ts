@@ -27,7 +27,7 @@ export type GetArticlesQuery = {
         name: string;
         slug: string;
         id: string;
-        bodyText: string;
+        bodySnippet: string;
         createdAt: string;
         updatedAt: string;
       }>;
