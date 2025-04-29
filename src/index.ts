@@ -37,7 +37,7 @@ export default class runbook {
     this.apiToken = config.apiToken;
   }
 
-  async postData<TQueryName extends keyof ResponseType>(data: {
+  async graphql<TQueryName extends keyof ResponseType>(data: {
     query: string;
     variables: VariablesType[TQueryName];
   }): Promise<ResponseType[TQueryName]> {
@@ -97,6 +97,14 @@ export default class runbook {
       query: queries[name]!,
       variables
     };
-    return await this.postData<TQueryName>(data);
+    return await this.graphql<TQueryName>(data);
+  }
+
+  async _query(query: string, variables: { [key: string]: any }) {
+    const data = {
+      query,
+      variables
+    };
+    return await this.graphql(data);
   }
 }

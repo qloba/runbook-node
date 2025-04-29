@@ -126,6 +126,7 @@ export type ResponseType = {
   getArticle: GetArticleQuery;
   getCategories: GetCategoriesQuery;
   search: searchQuery;
+  undefined: any;
 };
 
 export type VariablesType = {
@@ -134,4 +135,5 @@ export type VariablesType = {
   getArticle: GetArticleQueryVariables;
   getCategories: GetCategoriesQueryVariables;
   search: searchQueryVariables;
+  undefined: any;
 };
