@@ -99,12 +99,4 @@ export default class runbook {
     };
     return await this.graphql<TQueryName>(data);
   }
-
-  async _query(query: string, variables: { [key: string]: any }) {
-    const data = {
-      query,
-      variables
-    };
-    return await this.graphql(data);
-  }
 }
