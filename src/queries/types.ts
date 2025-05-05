@@ -88,7 +88,7 @@ export type searchQuery = {
 };
 
 export type GetBooksQueryVariables = {
-  q: string;
+  q?: string;
   first?: number;
   offset?: number;
 };

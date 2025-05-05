@@ -1,6 +1,6 @@
 import Runbook from '../index';
 
-// Set environment variables BASE_URL and API_TOKEN before tesging
+// Set environment variables BASE_URL and API_TOKEN before testing
 // export BASE_URL='<BASE_URL>'
 // export API_TOKEN='<API_TOKEN>'
 
@@ -27,6 +27,14 @@ describe('List books', function () {
     const data = await runbook.query('getBooks', {
       q: 'test'
     });
+
+    expect(data).not.toBe(null);
+    expect(data.organization.books.nodes.length).toBeGreaterThan(0);
+  });
+
+  it('success', async () => {
+    const runbook = initRunbook();
+    const data = await runbook.query('getBooks', {});
 
     expect(data).not.toBe(null);
     expect(data.organization.books.nodes.length).toBeGreaterThan(0);
