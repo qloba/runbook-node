@@ -1,4 +1,6 @@
 import Runbook from '../index';
+import getBooksQuery from '../queries/getBooks';
+import { GetBooksQuery, GetBooksQueryVariables } from '../queries/types';
 
 // Set environment variables BASE_URL and API_TOKEN before testing
 // export BASE_URL='<BASE_URL>'
@@ -36,6 +38,24 @@ describe('List books', function () {
     const runbook = initRunbook();
     const data = await runbook.query('getBooks', {});
 
+    expect(data).not.toBe(null);
+    expect(data.organization.books.nodes.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Custom query', function () {
+  it('success', async () => {
+    const runbook = initRunbook();
+    const data = await runbook.graphql<
+      any,
+      GetBooksQuery,
+      GetBooksQueryVariables
+    >({
+      query: getBooksQuery,
+      variables: {
+        q: 'test'
+      }
+    });
     expect(data).not.toBe(null);
     expect(data.organization.books.nodes.length).toBeGreaterThan(0);
   });
