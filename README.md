@@ -1,5 +1,5 @@
 # runbook-node
-`runbook-node` is an SDK for Node.js to interact with the Runbook API.
+`runbook-node` is an SDK for Node.js to interact with the [Runbook API](https://developers.runbookdocs.com/).
 
 ## Installation
 
