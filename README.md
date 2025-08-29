@@ -25,10 +25,10 @@ console.log(data);
 
 ## Supported Queries
 
-- GetBooks
-- GetArticles
-- GetArticle
-- GetCategores
+- getBooks
+- getArticles
+- getArticle
+- getCategores
 - search
 
 ## License
