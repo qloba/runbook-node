@@ -28,6 +28,8 @@ function isMutation(query: string): boolean {
   return query.match(/^\s*mutation\s+\w+\(/m) !== null;
 }
 
+export { RequestError };
+
 export default class runbook {
   baseUrl: string;
   apiToken: string;
