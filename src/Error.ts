@@ -45,16 +45,27 @@ export default class RequestError extends Error {
   parseErrorMessages() {
     const response = this.json;
     switch (this.status) {
+      case 401:
+        this.addMessage(null, 'Unauthorized access.', 'unauthorized');
+        return;
       case 500:
-      case 400:
-      case 403:
-      case 404:
-      case 0:
         this.addMessage(
           null,
-          `An error occurred while requesting. (${this.status})`,
-          'request_error'
+          'Internal server error.',
+          'internal_server_error'
         );
+        return;
+      case 400:
+        this.addMessage(null, 'Bad request.', 'bad_request');
+        return;
+      case 403:
+        this.addMessage(null, 'Forbidden.', 'forbidden');
+        return;
+      case 404:
+        this.addMessage(null, 'Not found.', 'not_found');
+        return;
+      case 0:
+        this.addMessage(null, 'Network error or CORS issue.', 'network_error');
         return;
     }
     if (Array.isArray(response)) {
@@ -78,7 +89,7 @@ export default class RequestError extends Error {
     } else {
       this.addMessage(
         null,
-        'An error occurred while requesting.',
+        `An error occurred while requesting. status: ${this.status}`,
         'request_error'
       );
     }
