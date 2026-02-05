@@ -130,11 +130,11 @@ describeIntegration('Upload and download file', function () {
 
     const response = await runbook.uploadFile(
       file,
-      'article_attachment_files',
-      'article_attachment_file[blob]'
+      'run_state_attachment_files',
+      'run_state_attachment_file[blob]'
     );
     expect(response).not.toBeNull();
-    expect(response!.articleAttachmentFile.uid).toBeDefined();
+    expect(response!.runStateAttachmentFile.uid).toBeDefined();
   });
 });
 
@@ -403,7 +403,7 @@ describe('uploadFile()', function () {
 
   it('uploads file with FormData', async () => {
     const mockResponse = {
-      articleAttachmentFile: {
+      file: {
         uid: 'file-123',
         filename: 'test.pdf',
         contentType: 'application/pdf',

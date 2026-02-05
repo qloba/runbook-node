@@ -41,7 +41,7 @@ interface ApiParams {
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 interface UploadResponse {
-  articleAttachmentFile: {
+  [key: string]: {
     uid: string;
     filename: string;
     contentType: string;
