@@ -30,6 +30,33 @@ function isMutation(query: string): boolean {
 
 export { RequestError };
 
+interface ApiParams {
+  path: string;
+  method: Method;
+  headers?: { [key: string]: any };
+  data?: any;
+  query?: { [key: string]: any };
+}
+type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
+interface UploadResponse {
+  articleAttachmentFile: {
+    uid: string;
+    filename: string;
+    contentType: string;
+    size: number;
+  };
+}
+
+function buildQuery(query: { [key: string]: any }): string {
+  const result: string[] = [];
+  Object.keys(query).forEach((key) => {
+    if (query[key] === undefined) return;
+    result.push(`${key}=${encodeURIComponent(query[key])}`);
+  });
+  return result.join('&');
+}
+
 export default class runbook {
   baseUrl: string;
   apiToken: string;
@@ -87,6 +114,100 @@ export default class runbook {
 
   getEndpoint() {
     return `${this.baseUrl}/api/graphql`;
+  }
+
+  async api<T>(params: ApiParams): Promise<T> {
+    let path = params.path;
+    if (path.charAt(0) === '/') {
+      path = path.slice(1);
+    }
+    let url = `/api/${path}.json`;
+    if (params.query) {
+      url = `${url}?${buildQuery(params.query)}`;
+    }
+    const headers: { [key: string]: string } = {
+      ...params.headers,
+      'X-Requested-With': 'XMLHttpRequest',
+      Authorization: `Bearer ${this.apiToken}`
+    };
+    let method = params.method.toUpperCase();
+    if (['GET', 'POST'].indexOf(params.method) < 0) {
+      headers['X-Http-Method-Override'] = method;
+      method = 'POST';
+    }
+
+    let body = null;
+    if (params.data) {
+      if (params.data instanceof FormData) {
+        body = params.data;
+      } else if (params.data instanceof URLSearchParams) {
+        body = params.data.toString();
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      } else if (typeof params.data === 'string') {
+        body = params.data;
+        headers['Content-Type'] = 'text/plain';
+      } else {
+        body = JSON.stringify(params.data);
+        headers['Content-Type'] = 'application/json';
+      }
+    }
+
+    const options: RequestInit = {
+      method,
+      headers,
+      body
+    };
+
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      const error = await response.text();
+      throw new RequestError(error, response.status);
+    }
+    const result = await response.json();
+    return result as T;
+  }
+
+  async uploadFile(
+    file: File,
+    url: string,
+    paramName: string
+  ): Promise<UploadResponse | null> {
+    const formData = new FormData();
+    formData.append(paramName, file);
+    const options = {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        Authorization: `Bearer ${this.apiToken}`
+      }
+    };
+
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      const error = await response.text();
+      throw new RequestError(error, response.status);
+    }
+    const result = await response.json();
+    return result as UploadResponse;
+  }
+
+  async downloadFile(url: string): Promise<Blob> {
+    const options = {
+      method: 'GET',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        Authorization: `Bearer ${this.apiToken}`
+      }
+    };
+
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      const error = await response.text();
+      throw new RequestError(error, response.status);
+    }
+    const blob = await response.blob();
+    return blob;
   }
 
   async query<TQueryName extends keyof ResponseType>(
