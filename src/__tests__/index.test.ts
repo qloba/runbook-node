@@ -6,6 +6,9 @@ import { GetBooksQuery, GetBooksQueryVariables } from '../queries/types';
 // export BASE_URL='<BASE_URL>'
 // export API_TOKEN='<API_TOKEN>'
 
+const hasCredentials = !!(process.env.BASE_URL && process.env.API_TOKEN);
+const describeIntegration = hasCredentials ? describe : describe.skip;
+
 function initRunbook() {
   const runbook = new Runbook({
     baseUrl: process.env.BASE_URL!,
@@ -23,7 +26,7 @@ async function getBook() {
   return data.organization.books.nodes[0];
 }
 
-describe('List books', function () {
+describeIntegration('List books', function () {
   it('success', async () => {
     const runbook = initRunbook();
     const data = await runbook.query('getBooks', {
@@ -43,7 +46,7 @@ describe('List books', function () {
   });
 });
 
-describe('Custom query', function () {
+describeIntegration('Custom query', function () {
   it('success', async () => {
     const runbook = initRunbook();
     const data = await runbook.graphql<
@@ -61,7 +64,7 @@ describe('Custom query', function () {
   });
 });
 
-describe('Get articles', function () {
+describeIntegration('Get articles', function () {
   it('success', async () => {
     const runbook = initRunbook();
     const book = await getBook();
@@ -74,7 +77,7 @@ describe('Get articles', function () {
   });
 });
 
-describe('Get article', function () {
+describeIntegration('Get article', function () {
   it('success', async () => {
     const runbook = initRunbook();
     const book = await getBook();
@@ -92,7 +95,7 @@ describe('Get article', function () {
   });
 });
 
-describe('Get categories', function () {
+describeIntegration('Get categories', function () {
   it('success', async () => {
     const runbook = initRunbook();
     const book = await getBook();
@@ -105,7 +108,7 @@ describe('Get categories', function () {
   });
 });
 
-describe('Search', function () {
+describeIntegration('Search', function () {
   it('success', async () => {
     const runbook = initRunbook();
     const data = await runbook.query('search', {
@@ -115,6 +118,23 @@ describe('Search', function () {
 
     expect(data).not.toBe(null);
     expect(data.searchResults.nodes.length).toBeGreaterThan(0);
+  });
+});
+
+describeIntegration('Upload and download file', function () {
+  it('integration test', async () => {
+    const runbook = initRunbook();
+    const file = new File(['Hello, world!'], 'hello.txt', {
+      type: 'text/plain'
+    });
+
+    const response = await runbook.uploadFile(
+      file,
+      'article_attachment_files',
+      'article_attachment_file[blob]'
+    );
+    expect(response).not.toBeNull();
+    expect(response!.articleAttachmentFile.uid).toBeDefined();
   });
 });
 
@@ -147,14 +167,17 @@ describe('api()', function () {
       method: 'GET'
     });
 
-    expect(global.fetch).toHaveBeenCalledWith('/api/users.json', {
-      method: 'GET',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        Authorization: 'Bearer test-token'
-      },
-      body: null
-    });
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://example.com/api/users.json',
+      {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          Authorization: 'Bearer test-token'
+        },
+        body: null
+      }
+    );
     expect(result).toEqual(mockResponse);
   });
 
@@ -176,15 +199,18 @@ describe('api()', function () {
       data: { title: 'Test Article' }
     });
 
-    expect(global.fetch).toHaveBeenCalledWith('/api/articles.json', {
-      method: 'POST',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        Authorization: 'Bearer test-token',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ title: 'Test Article' })
-    });
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://example.com/api/articles.json',
+      {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          Authorization: 'Bearer test-token',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title: 'Test Article' })
+      }
+    );
     expect(result).toEqual(mockResponse);
   });
 
@@ -206,16 +232,19 @@ describe('api()', function () {
       data: { title: 'Updated' }
     });
 
-    expect(global.fetch).toHaveBeenCalledWith('/api/articles/123.json', {
-      method: 'POST',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        Authorization: 'Bearer test-token',
-        'X-Http-Method-Override': 'PUT',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ title: 'Updated' })
-    });
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://example.com/api/articles/123.json',
+      {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          Authorization: 'Bearer test-token',
+          'X-Http-Method-Override': 'PUT',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title: 'Updated' })
+      }
+    );
   });
 
   it('handles query parameters', async () => {
@@ -237,7 +266,7 @@ describe('api()', function () {
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      '/api/search.json?q=test&page=1',
+      'https://example.com/api/search.json?q=test&page=1',
       expect.any(Object)
     );
   });
@@ -263,15 +292,18 @@ describe('api()', function () {
       data: params
     });
 
-    expect(global.fetch).toHaveBeenCalledWith('/api/submit.json', {
-      method: 'POST',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        Authorization: 'Bearer test-token',
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: 'name=test'
-    });
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://example.com/api/submit.json',
+      {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          Authorization: 'Bearer test-token',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'name=test'
+      }
+    );
   });
 
   it('handles string body', async () => {
@@ -292,15 +324,18 @@ describe('api()', function () {
       data: 'plain text content'
     });
 
-    expect(global.fetch).toHaveBeenCalledWith('/api/raw.json', {
-      method: 'POST',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        Authorization: 'Bearer test-token',
-        'Content-Type': 'text/plain'
-      },
-      body: 'plain text content'
-    });
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://example.com/api/raw.json',
+      {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          Authorization: 'Bearer test-token',
+          'Content-Type': 'text/plain'
+        },
+        body: 'plain text content'
+      }
+    );
   });
 
   it('handles FormData body', async () => {
@@ -324,14 +359,17 @@ describe('api()', function () {
       data: formData
     });
 
-    expect(global.fetch).toHaveBeenCalledWith('/api/upload.json', {
-      method: 'POST',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        Authorization: 'Bearer test-token'
-      },
-      body: formData
-    });
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://example.com/api/upload.json',
+      {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          Authorization: 'Bearer test-token'
+        },
+        body: formData
+      }
+    );
   });
 
   it('throws RequestError on non-ok response', async () => {
@@ -385,20 +423,19 @@ describe('uploadFile()', function () {
     const file = new File(['test content'], 'test.pdf', {
       type: 'application/pdf'
     });
-    const result = await runbook.uploadFile(
-      file,
-      'https://example.com/upload',
-      'attachment'
-    );
+    const result = await runbook.uploadFile(file, 'upload', 'attachment');
 
-    expect(global.fetch).toHaveBeenCalledWith('https://example.com/upload', {
-      method: 'POST',
-      body: expect.any(FormData),
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        Authorization: 'Bearer test-token'
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://example.com/api/upload',
+      {
+        method: 'POST',
+        body: expect.any(FormData),
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          Authorization: 'Bearer test-token'
+        }
       }
-    });
+    );
     expect(result).toEqual(mockResponse);
   });
 
@@ -416,9 +453,7 @@ describe('uploadFile()', function () {
 
     const file = new File(['test'], 'test.txt', { type: 'text/plain' });
 
-    await expect(
-      runbook.uploadFile(file, 'https://example.com/upload', 'file')
-    ).rejects.toThrow();
+    await expect(runbook.uploadFile(file, 'upload', 'file')).rejects.toThrow();
   });
 });
 
@@ -445,12 +480,10 @@ describe('downloadFile()', function () {
       apiToken: 'test-token'
     });
 
-    const result = await runbook.downloadFile(
-      'https://example.com/files/test.txt'
-    );
+    const result = await runbook.downloadFile('files/test.txt');
 
     expect(global.fetch).toHaveBeenCalledWith(
-      'https://example.com/files/test.txt',
+      'https://example.com/api/files/test.txt?proxy=1',
       {
         method: 'GET',
         headers: {
@@ -474,8 +507,6 @@ describe('downloadFile()', function () {
       apiToken: 'test-token'
     });
 
-    await expect(
-      runbook.downloadFile('https://example.com/files/secret.txt')
-    ).rejects.toThrow();
+    await expect(runbook.downloadFile('files/secret.txt')).rejects.toThrow();
   });
 });

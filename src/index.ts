@@ -5,6 +5,7 @@ import getBooksQuery from './queries/getBooks';
 import getCategoriesQuery from './queries/getCategories';
 import searchQuery from './queries/search';
 import { ResponseType, VariablesType } from './queries/types';
+import { deepSnakeCase, deepCamelCase } from './lib/string';
 
 const queries: { [key: string]: string } = {
   getArticle: getArticleQuery,
@@ -121,9 +122,9 @@ export default class runbook {
     if (path.charAt(0) === '/') {
       path = path.slice(1);
     }
-    let url = `/api/${path}.json`;
+    let url = `${this.baseUrl}/api/${path}.json`;
     if (params.query) {
-      url = `${url}?${buildQuery(params.query)}`;
+      url = `${url}?${buildQuery(deepSnakeCase(params.query))}`;
     }
     const headers: { [key: string]: string } = {
       ...params.headers,
@@ -147,7 +148,7 @@ export default class runbook {
         body = params.data;
         headers['Content-Type'] = 'text/plain';
       } else {
-        body = JSON.stringify(params.data);
+        body = JSON.stringify(deepSnakeCase(params.data));
         headers['Content-Type'] = 'application/json';
       }
     }
@@ -164,12 +165,12 @@ export default class runbook {
       throw new RequestError(error, response.status);
     }
     const result = await response.json();
-    return result as T;
+    return deepCamelCase(result) as T;
   }
 
   async uploadFile(
     file: File,
-    url: string,
+    path: string,
     paramName: string
   ): Promise<UploadResponse | null> {
     const formData = new FormData();
@@ -182,17 +183,20 @@ export default class runbook {
         Authorization: `Bearer ${this.apiToken}`
       }
     };
-
+    const url = `${this.baseUrl}/api/${path}`;
     const response = await fetch(url, options);
     if (!response.ok) {
       const error = await response.text();
       throw new RequestError(error, response.status);
     }
-    const result = await response.json();
-    return result as UploadResponse;
+    const result: any = await response.json();
+    return deepCamelCase(result) as UploadResponse;
   }
 
-  async downloadFile(url: string): Promise<Blob> {
+  async downloadFile(
+    path: string,
+    query?: { [key: string]: any }
+  ): Promise<Blob> {
     const options = {
       method: 'GET',
       headers: {
@@ -201,6 +205,12 @@ export default class runbook {
       }
     };
 
+    // Add proxy=1 to the query parameters
+    if (!query) {
+      query = {};
+    }
+    query['proxy'] = 1;
+    const url = `${this.baseUrl}/api/${path}?${buildQuery(deepSnakeCase(query))}`;
     const response = await fetch(url, options);
     if (!response.ok) {
       const error = await response.text();

@@ -17,8 +17,8 @@ export default class RequestError extends Error {
     if (typeof data === 'string') {
       try {
         this.json = JSON.parse(data);
-      } catch (e) {
-        console.error('Failed to parse JSON:', e);
+      } catch {
+        this.json = [data];
       }
     } else {
       this.json = data;
